@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/fatedier/frp/cmd/frpc"
+	"github.com/helogic/frp/cmd/frpc"
 	"os"
 )
 
