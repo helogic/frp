@@ -90,17 +90,17 @@ func initConfig() {
 			return
 		}
 		//使用环境变量配置
-		common.NewKey("server_addr", os.Getenv("server_addr"))
-		common.NewKey("server_port", os.Getenv("server_port"))
+		common.NewKey("server_addr", os.Getenv("frp_server_addr"))
+		common.NewKey("server_port", os.Getenv("frp_server_port"))
 		lcWeb, err := cf.NewSection("lc_web")
 		if err != nil {
 			log.Error(err.Error())
 			return
 		}
 		lcWeb.NewKey("type", "http")
-		lcWeb.NewKey("local_port", os.Getenv("local_port"))
-		lcWeb.NewKey("local_ip", os.Getenv("local_ip"))
-		lcWeb.NewKey("custom_domains", "lc-web")
+		lcWeb.NewKey("local_port", os.Getenv("frp_local_port"))
+		lcWeb.NewKey("local_ip", os.Getenv("frp_local_ip"))
+		lcWeb.NewKey("custom_domains", os.Getenv("frp_domain"))
 		err = cf.SaveTo("./frpc.ini")
 		if err != nil {
 			log.Error(err.Error())
