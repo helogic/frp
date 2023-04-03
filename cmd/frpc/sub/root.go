@@ -16,6 +16,7 @@ package sub
 
 import (
 	"fmt"
+	"gopkg.in/ini.v1"
 	"io/fs"
 	"net"
 	"os"
@@ -78,7 +79,34 @@ var (
 	tlsEnable bool
 )
 
-func init() {
+func initConfig() {
+	_, err2 := os.Stat("./frpc.ini")
+	if os.IsNotExist(err2) {
+		log.Info("config file not found. create config file")
+		cf := ini.Empty()
+		common, err := cf.NewSection("common")
+		if err != nil {
+			log.Error(err.Error())
+			return
+		}
+		//使用环境变量配置
+		common.NewKey("server_addr", os.Getenv("server_addr"))
+		common.NewKey("server_port", os.Getenv("server_port"))
+		lcWeb, err := cf.NewSection("lc_web")
+		if err != nil {
+			log.Error(err.Error())
+			return
+		}
+		lcWeb.NewKey("type", "http")
+		lcWeb.NewKey("local_port", os.Getenv("local_port"))
+		lcWeb.NewKey("local_ip", os.Getenv("local_ip"))
+		lcWeb.NewKey("custom_domains", "lc-web")
+		err = cf.SaveTo("./frpc.ini")
+		if err != nil {
+			log.Error(err.Error())
+			return
+		}
+	}
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "./frpc.ini", "config file of frpc")
 	rootCmd.PersistentFlags().StringVarP(&cfgDir, "config_dir", "", "", "config directory, run one frpc service for each file in config directory")
 	rootCmd.PersistentFlags().BoolVarP(&showVersion, "version", "v", false, "version of frpc")
@@ -142,6 +170,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
+	initConfig()
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
