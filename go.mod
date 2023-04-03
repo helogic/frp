@@ -1,4 +1,4 @@
-module github.com/logiche/frp
+module github.com/helogic/frp
 
 go 1.20
 
